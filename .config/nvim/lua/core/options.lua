@@ -31,6 +31,6 @@ vim.opt.showmode = false
 vim.opt.cursorline = true
 vim.opt.fillchars = "eob: "
 
-vim.opt.pumheight = 20
+vim.opt.pumheight = 15
 
 vim.g.netrw_banner = 0

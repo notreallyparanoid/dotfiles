@@ -13,7 +13,42 @@ return {
 		-- Completion Engine
 		{ "L3MON4D3/LuaSnip", name = "luasnip" },
 	},
-	config = function()
+	opts = {
+		window = {
+			completion = {
+				scrollbar = false,
+				col_offset = 2,
+			},
+			documentation = {
+				max_height = 10,
+				max_width = 50,
+			},
+		},
+		formatting = {
+			fields = { "kind", "abbr" },
+			format = function(entry, item)
+				local kind = require("lspkind").cmp_format({ mode = "symbol", preset = "codicons" })(entry, item)
+				kind.kind = (kind.kind or "")
+
+				local ELLIPSIS_CHAR = "…"
+				local MAX_LABEL_WIDTH = 35
+				local content = item.abbr
+
+				local get_ws = function(max, len)
+					return (" "):rep(max - len)
+				end
+
+				if #content > MAX_LABEL_WIDTH then
+					item.abbr = string.sub(content, 0, MAX_LABEL_WIDTH) .. ELLIPSIS_CHAR
+				else
+					item.abbr = content .. get_ws(MAX_LABEL_WIDTH, #content)
+				end
+
+				return kind
+			end,
+		},
+	},
+	init = function()
 		local cmp = require("cmp")
 		local luasnip = require("luasnip")
 		require("luasnip.loaders.from_vscode").lazy_load()
@@ -67,45 +102,6 @@ return {
 					end
 				end, { "i", "s" }),
 			}),
-
-			-- Rice
-			window = {
-				completion = {
-					scrollbar = false,
-					col_offset = 2,
-				},
-				documentation = {
-					max_height = 10,
-					max_width = 50,
-				},
-			},
-			formatting = {
-				fields = { "kind", "abbr", "menu" },
-				format = function(entry, vim_item)
-					local kind =
-						require("lspkind").cmp_format({ mode = "symbol", preset = "codicons" })(entry, vim_item)
-					kind.kind = (kind.kind or "")
-					kind.menu = nil
-					kind.word = nil
-
-					local ELLIPSIS_CHAR = "…"
-					local MAX_LABEL_WIDTH = 35
-					local content = vim_item.abbr
-
-					local get_ws = function(max, len)
-						return (" "):rep(max - len)
-					end
-
-					if #content > MAX_LABEL_WIDTH then
-						vim_item.abbr = string.sub(content, 0, MAX_LABEL_WIDTH) .. ELLIPSIS_CHAR
-					else
-						vim_item.abbr = content .. get_ws(MAX_LABEL_WIDTH, #content)
-					end
-
-					vim.o.pumheight = 20
-					return kind
-				end,
-			},
 		})
 	end,
 }

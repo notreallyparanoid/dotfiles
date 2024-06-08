@@ -17,6 +17,8 @@ return {
 	{
 		"williamboman/mason-lspconfig.nvim",
 		name = "mason-lsp-config",
-		config = true,
+		opts = {
+			ensure_installed = { "lua_ls", "clangd" },
+		},
 	},
 }
