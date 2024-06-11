@@ -25,10 +25,11 @@ return {
 			},
 		},
 		formatting = {
-			fields = { "kind", "abbr" },
+			fields = { "kind", "abbr", "menu" },
 			format = function(entry, item)
 				local kind = require("lspkind").cmp_format({ mode = "symbol", preset = "codicons" })(entry, item)
 				kind.kind = (kind.kind or "")
+				kind.menu = nil
 
 				local ELLIPSIS_CHAR = "…"
 				local MAX_LABEL_WIDTH = 35
@@ -41,7 +42,7 @@ return {
 				if #content > MAX_LABEL_WIDTH then
 					item.abbr = string.sub(content, 0, MAX_LABEL_WIDTH) .. ELLIPSIS_CHAR
 				else
-					item.abbr = content .. get_ws(MAX_LABEL_WIDTH, #content)
+					item.abbr = content .. get_ws(MAX_LABEL_WIDTH, #content) .. " "
 				end
 
 				return kind
