@@ -16,12 +16,18 @@ return {
 		end
 
 		local servers = {
-			"lua_ls",
-			"clangd",
+			["lua_ls"] = {
+				Lua = {
+					diagnostics = { globals = { "vim" } },
+					workspace = { library = { vim.env.VIMRUNTIME } },
+					telemetry = { enable = false },
+				},
+			},
+			["clangd"] = {},
 		}
 
-		for _, server in pairs(servers) do
-			lsp[server].setup({ on_attach = on_attach, capabilities = capabilities })
+		for server, options in pairs(servers) do
+			lsp[server].setup({ on_attach = on_attach, capabilities = capabilities, settings = options })
 		end
 
 		-- Rice
