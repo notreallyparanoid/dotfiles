@@ -1,2 +1,1 @@
-.config/nvim/.luarc.json
-.config/nvim/.lockfile.json
+.config/nvim/.lazylock.json

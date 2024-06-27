@@ -5,18 +5,17 @@ return {
     priority = 1000,
     opts = {
         options = {
-            theme = "rose-pine-alt",
-            component_separators = { left = "•", right = "•" },
+            component_separators = { left = "", right = "" },
             section_separators = { left = "", right = "" },
             globalstatus = true,
         },
         sections = {
-            lualine_a = { "mode", "branch", "diff" },
-            lualine_b = {},
+            lualine_a = { "mode", "selectioncount" },
+            lualine_b = { "branch", "diff" },
             lualine_c = {},
             lualine_x = {},
-            lualine_y = {},
-            lualine_z = { "searchcount", { "diagnostics", icons_enabled = false }, "filename" },
+            lualine_y = { { "diagnostics", symbols = { error = "● ", warn = "● ", info = "● ", hint = "● " } } },
+            lualine_z = { "searchcount", "filename" },
         },
     },
 }

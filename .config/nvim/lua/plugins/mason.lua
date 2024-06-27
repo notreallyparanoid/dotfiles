@@ -5,7 +5,7 @@ return {
 		opts = {
 			ui = {
 				width = 0.8,
-				height = 0.75,
+				height = 0.8,
 				icons = {
 					package_installed = "-",
 					package_pending = "•",
@@ -18,7 +18,7 @@ return {
 		"williamboman/mason-lspconfig.nvim",
 		name = "mason-lsp-config",
 		opts = {
-			ensure_installed = { "lua_ls", "clangd" },
+			ensure_installed = require("language-server-settings").servers,
 		},
 	},
 }

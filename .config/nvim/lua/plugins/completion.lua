@@ -3,106 +3,56 @@ return {
 	name = "cmp",
 	dependencies = {
 		-- Sources
-		{ "hrsh7th/cmp-path", name = "cmp-src-path" },
 		{ "hrsh7th/cmp-nvim-lsp", name = "cmp-src-lsp" },
-		{ "saadparwaiz1/cmp_luasnip", name = "cmp-src-luasnip" },
 
-		-- Snippets
+		-- Snippet
 		{ "rafamadriz/friendly-snippets", name = "friendly-snippets" },
 
-		-- Completion Engine
-		{ "L3MON4D3/LuaSnip", name = "luasnip" },
-	},
-	opts = {
-		window = {
-			completion = {
-				scrollbar = false,
-				col_offset = 2,
-			},
-			documentation = {
-				max_height = 10,
-				max_width = 50,
-			},
+		-- Snippet Engine
+		{
+			"garymjr/nvim-snippets",
+			name = "snippets",
+			opts = { create_cmp_source = true, friendly_snippets = true },
 		},
-		formatting = {
-			fields = { "kind", "abbr", "menu" },
-			format = function(entry, item)
-				local kind = require("lspkind").cmp_format({ mode = "symbol", preset = "codicons" })(entry, item)
-				kind.kind = (kind.kind or "")
-				kind.menu = nil
 
-				local ELLIPSIS_CHAR = "…"
-				local MAX_LABEL_WIDTH = 35
-				local content = item.abbr
-
-				local get_ws = function(max, len)
-					return (" "):rep(max - len)
-				end
-
-				if #content > MAX_LABEL_WIDTH then
-					item.abbr = string.sub(content, 0, MAX_LABEL_WIDTH) .. ELLIPSIS_CHAR
-				else
-					item.abbr = content .. get_ws(MAX_LABEL_WIDTH, #content) .. " "
-				end
-
-				return kind
-			end,
-		},
+		-- Rice
+		{ "onsails/lspkind.nvim", name = "lsp-kind" },
 	},
-	init = function()
+	config = function()
+		-- Setup
 		local cmp = require("cmp")
-		local luasnip = require("luasnip")
-		require("luasnip.loaders.from_vscode").lazy_load()
 		cmp.setup({
 			snippet = {
 				expand = function(args)
 					vim.snippet.expand(args.body)
 				end,
 			},
-
-			sources = cmp.config.sources({ { name = "nvim_lsp" }, { name = "luasnip" } }, { name = "buffer" }),
-
+			sources = cmp.config.sources({ { name = "nvim_lsp" }, { name = "snippets" } }),
 			mapping = cmp.mapping.preset.insert({
 				["<C-b>"] = cmp.mapping.scroll_docs(-4),
-
 				["<C-f>"] = cmp.mapping.scroll_docs(4),
-
 				["<C-e>"] = cmp.mapping.abort(),
-
-				["<CR>"] = cmp.mapping(function(fallback)
-					if cmp.visible() then
-						if luasnip.expandable() then
-							luasnip.expand()
-						else
-							cmp.confirm({
-								select = true,
-							})
-						end
-					else
-						fallback()
-					end
-				end),
-
-				["<Tab>"] = cmp.mapping(function(fallback)
-					if cmp.visible() then
-						cmp.select_next_item()
-					elseif luasnip.locally_jumpable(1) then
-						luasnip.jump(1)
-					else
-						fallback()
-					end
-				end, { "i", "s" }),
-
-				["<S-Tab>"] = cmp.mapping(function(fallback)
-					if cmp.visible() then
-						cmp.select_prev_item()
-					elseif luasnip.locally_jumpable(-1) then
-						luasnip.jump(-1)
-					else
-						fallback()
-					end
-				end, { "i", "s" }),
+				["<CR>"] = cmp.mapping.confirm({ select = true }),
 			}),
+
+			-- Rice
+			window = {
+				completion = { scrollbar = false },
+				documentation = { max_height = 10, max_width = 50 },
+			},
+			formatting = {
+				fields = { "kind", "abbr", "menu" },
+				format = function(entry, item)
+					item.kind = require("lspkind").cmp_format({ mode = "symbol", preset = "codicons" })(entry, item).kind
+					item.menu = nil
+					if #item.abbr > 35 then
+						item.abbr = string.sub(item.abbr, 0, 35) .. "…"
+					else
+						item.abbr = item.abbr .. (" "):rep(35 - #item.abbr) .. " "
+					end
+                    return item
+				end,
+			},
 		})
 	end,
 }
