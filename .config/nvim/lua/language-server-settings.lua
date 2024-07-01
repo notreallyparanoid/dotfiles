@@ -9,6 +9,7 @@ M.server_settings = {
 		},
 	},
 	["rust_analyzer"] = {},
+    ["hls"] = {},
 	["clangd"] = {},
 	["taplo"] = {},
 	["html"] = {},
